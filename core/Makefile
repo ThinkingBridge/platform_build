@@ -1311,6 +1311,7 @@ $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(DISTTOOLS)
 	   -k $(KEY_CERT_PAIR) \
 	     --no_assert=$(skip_assert) \
 	     --override_device=$(override_device) \
+	     --motd $(PRODUCT_MOTD) \
 	   $(BUILT_TARGET_FILES_PACKAGE) $@
 
 .PHONY: otapackage bacon
