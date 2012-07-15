@@ -419,7 +419,9 @@ def WriteFullOTAPackage(input_zip, output_zip):
   device_specific.FullOTA_InstallBegin()
   
   if OPTIONS.backuptool:
+    script.Mount("/system")
     script.RunBackup("backup")
+    script.Unmount("/system")
 
 # MOTD during flash added for Evervolv by cocide
   if (OPTIONS.motd != None):
