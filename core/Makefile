@@ -1306,6 +1306,8 @@ else
     $(INTERNAL_OTA_PACKAGE_TARGET): skip_assert := false
 endif
 
+$(INTERNAL_OTA_PACKAGE_TARGET): backuptool := true
+
 $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(DISTTOOLS)
 	@echo -e ${CL_YLW}"Package OTA:"${CL_RST}" $@"
 	$(OTA_FROM_TARGET_SCRIPT) -v \
@@ -1314,6 +1316,7 @@ $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(DISTTOOLS)
 	     --no_assert=$(skip_assert) \
 	     --override_device=$(override_device) \
 	     --motd $(PRODUCT_MOTD) \
+	     --backup=$(backuptool) \
 	   $(BUILT_TARGET_FILES_PACKAGE) $@
 
 .PHONY: otapackage bacon

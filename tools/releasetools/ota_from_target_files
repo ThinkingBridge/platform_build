@@ -52,6 +52,10 @@ Usage:  ota_from_target_files [flags] input_target_files output_ota_package
   -a  (--aslr_mode)  <on|off>
       Specify whether to turn on ASLR for the package (on by default).
 
+  --backup <boolean>
+      Enable or disable the execution of backuptool.sh.
+      Disabled by default.
+
   --override_device <device>
       Override device-specific asserts. Can be a comma-separated list.
 
@@ -106,6 +110,7 @@ OPTIONS.override_device = 'auto'
 OPTIONS.no_assert = False
 OPTIONS.motd = None
 OPTIONS.motdLim = 48
+OPTIONS.backuptool = False
 
 def MostPopularKey(d, default):
   """Given a dict, return the key corresponding to the largest
@@ -412,6 +417,9 @@ def WriteFullOTAPackage(input_zip, output_zip):
   script.Print(time.strftime("Built at: %Y-%m-%d %H:%M (%Z)", time.localtime()))
 
   device_specific.FullOTA_InstallBegin()
+  
+  if OPTIONS.backuptool:
+    script.RunBackup("backup")
 
 # MOTD during flash added for Evervolv by cocide
   if (OPTIONS.motd != None):
@@ -459,6 +467,10 @@ def WriteFullOTAPackage(input_zip, output_zip):
   common.CheckSize(boot_img.data, "boot.img", OPTIONS.info_dict)
   common.ZipWriteStr(output_zip, "boot.img", boot_img.data)
   script.ShowProgress(0.2, 0)
+
+  if OPTIONS.backuptool:
+    script.ShowProgress(0.2, 10)
+    script.RunBackup("restore")
 
   script.ShowProgress(0.2, 10)
   script.WriteRawImage("/boot", "boot.img")
@@ -801,6 +813,8 @@ def main(argv):
       OPTIONS.motd = a
     elif o in ("--motd-limit"):
       OPTIONS.motdLim = a
+    elif o in ("--backup"):
+      OPTIONS.backuptool = bool(a.lower() == 'true')
     else:
       return False
     return True
@@ -817,6 +831,7 @@ def main(argv):
                                               "worker_threads=",
                                               "aslr_mode=",
                                               "override_device=",
+                                              "backup=",
                                               "motd=",
                                               "motd-limit="],
                              extra_option_handler=option_handler)
