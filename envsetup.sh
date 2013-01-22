@@ -478,7 +478,7 @@ function breakfast()
     AOSP_DEVICES_ONLY="true"
     unset LUNCH_MENU_CHOICES
     add_lunch_combo full-eng
-    for f in `/bin/ls vendor/aosp/vendorsetup.sh 2> /dev/null`
+    for f in `/bin/ls vendor/thinkingbridge/vendorsetup.sh 2> /dev/null`
         do
             echo "including $f"
             . $f
@@ -494,8 +494,8 @@ function breakfast()
             # A buildtype was specified, assume a full device name
             lunch $target
         else
-            # This is probably just the Xylon model name
-            lunch xylon_$target-userdebug
+            # This is probably just the ThinkingBridge model name
+            lunch thinkingbridge_$target-userdebug
         fi
     fi
     return $?
@@ -1231,12 +1231,6 @@ function mka() {
             schedtool -B -n 1 -e ionice -n 1 make -j$(cat /proc/cpuinfo | grep "^processor" | wc -l) "$@"
             ;;
     esac
-}
-
-function mbot() {
-    unset LUNCH_MENU_CHOICES
-    croot
-    ./vendor/aosp/bot/deploy.sh
 }
 
 function mkapush() {
