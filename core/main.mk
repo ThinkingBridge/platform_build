@@ -276,11 +276,6 @@ ifneq ($(filter sdk win_sdk sdk_addon,$(MAKECMDGOALS)),)
 is_sdk_build := true
 endif
 
-## have selinux ##
-ifeq ($(HAVE_SELINUX),true)
-ADDITIONAL_BUILD_PROPERTIES += ro.build.selinux=1
-endif # HAVE_SELINUX
-
 ## user/userdebug ##
 
 user_variant := $(filter user userdebug,$(TARGET_BUILD_VARIANT))
@@ -696,7 +691,6 @@ modules_to_install := $(sort $(ALL_DEFAULT_INSTALLED_MODULES))
 ALL_DEFAULT_INSTALLED_MODULES :=
 
 endif # dont_bother
-
 
 # These are additional goals that we build, in order to make sure that there
 # is as little code as possible in the tree that doesn't build.
