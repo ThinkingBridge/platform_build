@@ -1264,12 +1264,6 @@ function mka() {
     esac
 }
 
-function mbot() {
-    unset LUNCH_MENU_CHOICES
-    croot
-    ./vendor/thinkingbridge/bot/deploy.sh
-}
-
 function mkapush() {
     # There's got to be a better way to do this stupid shit.
     case `uname -s` in
