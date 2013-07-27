@@ -1,4 +1,3 @@
-
 #
 # Copyright (C) 2008 The Android Open Source Project
 #
@@ -19,4 +18,8 @@
 # (like "CRB01").  It must be a single word, and is
 # capitalized by convention.
 
+<<<<<<< HEAD
 export BUILD_ID=JDQ39E
+=======
+export BUILD_ID=JSS15J
+>>>>>>> android-4.3_r2.1
