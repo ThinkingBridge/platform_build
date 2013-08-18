@@ -19,6 +19,10 @@
 # devices (including non-phones and non-tablets), modify
 # core_minimal.mk instead.
 
+PRODUCT_PROPERTY_OVERRIDES := \
+    ro.config.notification_sound=Tejat.ogg \
+    ro.config.alarm_alert=Scandium.ogg
+
 PRODUCT_PACKAGES += \
     BasicDreams \
     Browser \
