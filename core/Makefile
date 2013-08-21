@@ -1401,17 +1401,14 @@ $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(DISTTOOLS)
 	   --override_device=$(override_device) \
 	   $(BUILT_TARGET_FILES_PACKAGE) $@
 
-THINKINGBRIDGE_TARGET_PACKAGE := $(PRODUCT_OUT)/$(THINKINGBRIDGE_VERSION).zip
-
 .PHONY: otapackage bacon
 otapackage: $(INTERNAL_OTA_PACKAGE_TARGET)
 bacon: otapackage
 ifneq ($(TARGET_CUSTOM_RELEASETOOL),)
 	$(error TARGET_CUSTOM_RELEASETOOL is deprecated)
 endif
-	$(hide) ln -f $(INTERNAL_OTA_PACKAGE_TARGET) $(THINKINGBRIDGE_TARGET_PACKAGE)
-	$(hide) $(MD5SUM) $(THINKINGBRIDGE_TARGET_PACKAGE) > $(THINKINGBRIDGE_TARGET_PACKAGE).md5sum
-	@echo -e ${CL_CYN}"Package Complete: $(CM_TARGET_PACKAGE)"${CL_RST}
+	@echo -e ${CL_YLW}"Running optimize tool..."${CL_RST}
+	$(hide) OTAPACKAGE=$(INTERNAL_OTA_PACKAGE_TARGET) APKCERTS=$(APKCERTS_FILE) ./vendor/thinkingbridge/tools/squisher
 
 # -----------------------------------------------------------------
 # The update package
