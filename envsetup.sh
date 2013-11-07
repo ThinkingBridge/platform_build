@@ -494,11 +494,7 @@ function brunch()
 {
     breakfast $*
     if [ $? -eq 0 ]; then
-<<<<<<< HEAD
-        time mka bacon
-=======
         mka bacon
->>>>>>> CM/cm-11.0
     else
         echo "No such item in brunch menu. Try 'breakfast'"
         return 1
@@ -509,17 +505,10 @@ function brunch()
 function breakfast()
 {
     target=$1
-<<<<<<< HEAD
-    THINKINGBRIDGE_DEVICES_ONLY="true"
-    unset LUNCH_MENU_CHOICES
-    add_lunch_combo full-eng
-    for f in `/bin/ls vendor/thinkingbridge/vendorsetup.sh 2> /dev/null`
-=======
     CM_DEVICES_ONLY="true"
     unset LUNCH_MENU_CHOICES
     add_lunch_combo full-eng
     for f in `/bin/ls vendor/cm/vendorsetup.sh 2> /dev/null`
->>>>>>> CM/cm-11.0
         do
             echo "including $f"
             . $f
@@ -535,13 +524,8 @@ function breakfast()
             # A buildtype was specified, assume a full device name
             lunch $target
         else
-<<<<<<< HEAD
-            # This is probably just the ThinkingBridge model name
-            lunch thinkingbridge_$target-userdebug
-=======
             # This is probably just the CM model name
             lunch cm_$target-userdebug
->>>>>>> CM/cm-11.0
         fi
     fi
     return $?
@@ -984,18 +968,18 @@ function qpid() {
         append='$'
         shift
     elif [ "$1" = "--help" -o "$1" = "-h" ]; then
-		echo "usage: qpid [[--exact] <process name|pid>"
-		return 255
-	fi
+                echo "usage: qpid [[--exact] <process name|pid>"
+                return 255
+        fi
 
     local EXE="$1"
     if [ "$EXE" ] ; then
-		qpid | \grep "$prepend$EXE$append"
-	else
-		adb shell ps \
-			| tr -d '\r' \
-			| sed -e 1d -e 's/^[^ ]* *\([0-9]*\).* \([^ ]*\)$/\1 \2/'
-	fi
+                qpid | \grep "$prepend$EXE$append"
+        else
+                adb shell ps \
+                        | tr -d '\r' \
+                        | sed -e 1d -e 's/^[^ ]* *\([0-9]*\).* \([^ ]*\)$/\1 \2/'
+        fi
 }
 
 function pid()
@@ -1016,7 +1000,7 @@ function pid()
         echo "$PID"
     else
         echo "usage: pid [--exact] <process name>"
-		return 255
+                return 255
     fi
 }
 
@@ -1482,9 +1466,6 @@ function godir () {
     \cd $T/$pathname
 }
 
-<<<<<<< HEAD
-# Make using all available CPUs
-=======
 function cmremote()
 {
     git remote rm cmremote 2> /dev/null
@@ -1942,16 +1923,12 @@ function cmrebase() {
     cd $pwd
 }
 
->>>>>>> CM/cm-11.0
 function mka() {
     case `uname -s` in
         Darwin)
             make -j `sysctl hw.ncpu|cut -d" " -f2` "$@"
             ;;
         *)
-<<<<<<< HEAD
-            schedtool -B -n 1 -e ionice -n 1 make -j `cat /proc/cpuinfo | grep "^processor" | wc -l` "$@"
-=======
             schedtool -B -n 1 -e ionice -n 1 make -j$(cat /proc/cpuinfo | grep "^processor" | wc -l) "$@"
             ;;
     esac
@@ -1984,13 +1961,10 @@ function reposync() {
             ;;
         *)
             schedtool -B -n 1 -e ionice -n 1 `which repo` sync -j 4 "$@"
->>>>>>> CM/cm-11.0
             ;;
     esac
 }
 
-<<<<<<< HEAD
-=======
 function repodiff() {
     if [ -z "$*" ]; then
         echo "Usage: repodiff <ref-from> [[ref-to] [--numstat]]"
@@ -2100,7 +2074,6 @@ function fixup_common_out_dir() {
 }
 
 
->>>>>>> CM/cm-11.0
 # Force JAVA_HOME to point to java 1.6 if it isn't already set
 function set_java_home() {
     if [ ! "$JAVA_HOME" ]; then

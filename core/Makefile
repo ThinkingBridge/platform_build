@@ -1437,27 +1437,17 @@ $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(DISTTOOLS)
 	   --override_device=$(override_device) \
 	   $(BUILT_TARGET_FILES_PACKAGE) $@
 
-<<<<<<< HEAD
-THINKINGBRIDGE_TARGET_PACKAGE := $(PRODUCT_OUT)/thinkingbridge-$(ROM_VERSION).zip
-=======
 CM_TARGET_PACKAGE := $(PRODUCT_OUT)/cm-$(CM_VERSION).zip
->>>>>>> CM/cm-11.0
 
 .PHONY: otapackage bacon
 otapackage: $(INTERNAL_OTA_PACKAGE_TARGET)
 bacon: otapackage
-<<<<<<< HEAD
-	$(hide) ln -f $(INTERNAL_OTA_PACKAGE_TARGET) $(THINKINGBRIDGE_TARGET_PACKAGE)
-	$(hide) $(MD5SUM) $(THINKINGBRIDGE_TARGET_PACKAGE) > $(THINKINGBRIDGE_TARGET_PACKAGE).md5sum
-	@echo -e "Package complete: $(THINKINGBRIDGE_TARGET_PACKAGE)"
-=======
 ifneq ($(TARGET_CUSTOM_RELEASETOOL),)
 	$(error TARGET_CUSTOM_RELEASETOOL is deprecated)
 endif
 	$(hide) ln -f $(INTERNAL_OTA_PACKAGE_TARGET) $(CM_TARGET_PACKAGE)
 	$(hide) $(MD5SUM) $(CM_TARGET_PACKAGE) > $(CM_TARGET_PACKAGE).md5sum
 	@echo -e ${CL_CYN}"Package Complete: $(CM_TARGET_PACKAGE)"${CL_RST}
->>>>>>> CM/cm-11.0
 
 # -----------------------------------------------------------------
 # The update package
