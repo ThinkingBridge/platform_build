@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
 # Copyright (C) 2013 Cybojenix <anthonydking@gmail.com>
-# Copyright (C) 2013 The OmniROM Project
+# Copyright (C) 2012 CyanogenMod Project
+# Copyright (C) 2013 The ThinkingBridge Project
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -36,14 +37,14 @@ except ImportError:
 # set this to the default remote to use in repo
 default_rem = "github"
 # set this to the default revision to use (branch/tag name)
-default_rev = "android-4.4"
+default_rev = "kitkat"
 # set this to the remote that you use for projects from your team repos
-# example fetch="https://github.com/omnirom"
-default_team_rem = "omnirom"
+# example fetch="https://github.com/ThinkingBridge"
+default_team_rem = "ThinkingBridge"
 # this shouldn't change unless google makes changes
 local_manifest_dir = ".repo/local_manifests"
 # change this to your name on github (or equivalent hosting)
-android_team = "omnirom"
+android_team = "ThinkingBridge"
 
 
 def check_repo_exists(git_data):
@@ -74,9 +75,9 @@ def get_device_url(git_data):
     device_url = ""
     for item in git_data['items']:
         temp_url = item.get('html_url')
-        if "{}/android_device".format(android_team) in temp_url:
+        if "{}/platform_device".format(android_team) in temp_url:
             try:
-                temp_url = temp_url[temp_url.index("android_device"):]
+                temp_url = temp_url[temp_url.index("platform_device"):]
             except ValueError:
                 pass
             else:
@@ -91,7 +92,7 @@ def get_device_url(git_data):
 
 
 def parse_device_directory(device_url):
-    to_strip = "android_device"
+    to_strip = "platform_device"
     repo_name = device_url[device_url.index(to_strip) + len(to_strip):]
     repo_dir = repo_name.replace("_", "/")
     return "device{}".format(repo_dir)
@@ -181,7 +182,7 @@ def write_to_manifest(manifest):
 def parse_device_from_manifest(device):
     for project in iterate_manifests():
         name = project.get('name')
-        if name.startswith("android_device_") and name.endswith(device):
+        if name.startswith("platform_device_") and name.endswith(device):
             return project.get('path')
     return None
 
@@ -204,7 +205,7 @@ def parse_device_from_folder(device):
 
 
 def parse_dependency_file(location):
-    dep_file = "omni.dependencies"
+    dep_file = "thinkingbridge.dependencies"
     dep_location = '/'.join([location, dep_file])
     if not os.path.isfile(dep_location):
         print("WARNING: %s file not found" % dep_location)
