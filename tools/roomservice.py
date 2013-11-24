@@ -2,7 +2,7 @@
 
 # Copyright (C) 2013 Cybojenix <anthonydking@gmail.com>
 # Copyright (C) 2012 CyanogenMod Project
-# Copyright (C) 2013 The ThinkingBridge Project
+# Copyright (C) 2013 ThinkingBridge Project
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
