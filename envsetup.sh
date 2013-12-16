@@ -60,11 +60,11 @@ function check_product()
     fi
 
     if (echo -n $1 | grep -q -e "^thinkingbridge_") ; then
-       CUSTOM_BUILD=$(echo -n $1 | sed -e 's/^thinkingbridge_//g')
+       THINKINGBRIDGE_BUILD=$(echo -n $1 | sed -e 's/^thinkingbridge_//g')
     else
-       CUSTOM_BUILD=
+       THINKINGBRIDGE_BUILD=
     fi
-    export CUSTOM_BUILD
+    export THINKINGBRIDGE_BUILD
 
     CALLED_FROM_SETUP=true BUILD_SYSTEM=build/core \
         TARGET_PRODUCT=$1 \
