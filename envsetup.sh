@@ -1,6 +1,9 @@
 function hmm() {
 cat <<EOF
 Invoke ". build/envsetup.sh" from your shell to add the following functions to your environment:
+- woorim:  Sync, ,make clean and Compile with odex
+- sync:    Sync, make clean and mka bacon
+- odex:    Compile Rom with odex
 - lunch:   lunch <product_name>-<build_variant>
 - tapas:   tapas [<App1> <App2> ...] [arm|x86|mips|armv5] [eng|userdebug|user]
 - croot:   Changes directory to the top of the tree.
@@ -458,6 +461,54 @@ function print_lunch_menu()
 
     echo
 }
+
+function tb()
+{
+    echo "Thinking Bridge"
+    return $?
+}
+
+function woorim()
+{
+    breakfast $*
+    if [ $? -eq 0 ]; then
+    	echo "Bridge love woorim very much :-)"
+    	repo sync
+    	make clean
+        time mka bacon WITH_DEXPREOPT=true
+    else
+        echo "No such item in brunch menu. Try 'breakfast'"
+        return 1
+    fi
+    return $?
+}
+
+function sync()
+{
+    breakfast $*
+    if [ $? -eq 0 ]; then
+    	repo sync
+    	make clean
+        time mka bacon
+    else
+        echo "No such item in brunch menu. Try 'breakfast'"
+        return 1
+    fi
+    return $?
+}
+
+function odex()
+{
+    breakfast $*
+    if [ $? -eq 0 ]; then
+        time mka bacon WITH_DEXPREOPT=true
+    else
+        echo "No such item in brunch menu. Try 'breakfast'"
+        return 1
+    fi
+    return $?
+}
+
 
 function brunch()
 {
