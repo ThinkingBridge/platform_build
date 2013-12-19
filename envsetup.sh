@@ -16,8 +16,6 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
 - jgrep:   Greps on all local Java files.
 - resgrep: Greps on all local res/*.xml files.
 - godir:   Go to the directory containing a file.
-- crremote: Add git remote for Carbon Gerrit Review.
-- crrebase: Rebase a Gerrit change and push it again.
 - aospremote: Add git remote for matching AOSP repository.
 - cafremote: Add git remote for matching CodeAurora repository.
 - mka:      Builds using SCHED_BATCH on all processors.
@@ -71,13 +69,13 @@ function check_product()
         return
     fi
 
-    if (echo -n $1 | grep -q -e "^carbon_") ; then
-       CARBON_BUILD=$(echo -n $1 | sed -e 's/^carbon_//g')
-       export BUILD_NUMBER=$((date +%s%N ; echo $CARBON_BUILD; hostname) | openssl sha1 | sed -e 's/.*=//g; s/ //g' | cut -c1-10)
+    if (echo -n $1 | grep -q -e "^thinkingbridge_") ; then
+       THINKINGBRIDGE_BUILD=$(echo -n $1 | sed -e 's/^thinkingbridge_//g')
+       export BUILD_NUMBER=$((date +%s%N ; echo $THINKINGBRIDGE_BUILD; hostname) | openssl sha1 | sed -e 's/.*=//g; s/ //g' | cut -c1-10)
     else
-       CARBON_BUILD=
+       THINKINGBRIDGE_BUILD=
     fi
-    export CARBON_BUILD
+    export THINKINGBRIDGE_BUILD
 
     CALLED_FROM_SETUP=true BUILD_SYSTEM=build/core \
         TARGET_PRODUCT=$1 \
@@ -464,7 +462,7 @@ function print_lunch_menu()
        echo "  (ohai, koush!)"
     fi
     echo
-    if [ "z${CARBON_DEVICES_ONLY}" != "z" ]; then
+    if [ "z${THINKINGBRIDGE_DEVICES_ONLY}" != "z" ]; then
        echo "Breakfast menu... pick a combo:"
     else
        echo "Lunch menu... pick a combo:"
@@ -478,7 +476,7 @@ function print_lunch_menu()
         i=$(($i+1))
     done | column
 
-    if [ "z${CARBON_DEVICES_ONLY}" != "z" ]; then
+    if [ "z${THINKINGBRIDGE_DEVICES_ONLY}" != "z" ]; then
        echo "... and don't forget the bacon!"
     fi
 
@@ -489,7 +487,7 @@ function brunch()
 {
     breakfast $*
     if [ $? -eq 0 ]; then
-        mka carbon
+        mka bacon
     else
         echo "No such item in brunch menu. Try 'breakfast'"
         return 1
@@ -500,10 +498,10 @@ function brunch()
 function breakfast()
 {
     target=$1
-    CARBON_DEVICES_ONLY="true"
+    THINKINGBRIDGE_DEVICES_ONLY="true"
     unset LUNCH_MENU_CHOICES
     add_lunch_combo full-eng
-    for f in `/bin/ls vendor/carbon/vendorsetup.sh 2> /dev/null`
+    for f in `/bin/ls vendor/thinkingbridge/vendorsetup.sh 2> /dev/null`
         do
             echo "including $f"
             . $f
@@ -519,8 +517,8 @@ function breakfast()
             # A buildtype was specified, assume a full device name
             lunch $target
         else
-            # This is probably just the Carbon model name
-            lunch carbon_$target-userdebug
+            # This is probably just the ThinkingBridge model name
+            lunch thinkingbridge_$target-userdebug
         fi
     fi
     return $?
@@ -569,18 +567,18 @@ function lunch()
     check_product $product
     if [ $? -ne 0 ]
     then
-        # if we can't find the product, try to grab it from our github
-        T=$(gettop)
-        pushd $T > /dev/null
-        build/tools/roomservice.py $product
-        popd > /dev/null
-        check_product $product
-    else
-        T=$(gettop)
-        pushd $T > /dev/null
-        build/tools/roomservice.py $product true
-        popd > /dev/null
-    fi
+    # if we can't find the product, try to grab it from our github
+    #T=$(gettop)
+        #pushd $T > /dev/null
+    #build/tools/roomservice.py $product
+    #popd > /dev/null
+    #check_product $product
+    #else
+    #T=$(gettop)
+    #pushd $T > /dev/null
+    #build/tools/roomservice.py $product true
+    #popd > /dev/null
+    #fi
     if [ $? -ne 0 ]
     then
         echo
@@ -672,8 +670,8 @@ function tapas()
 function eat()
 {
     if [ "$OUT" ] ; then
-        MODVERSION=$(get_build_var CCARBON_VERSION)
-        ZIPFILE=carbon-$MODVERSION.zip
+        MODVERSION=$(get_build_var THINKINGBRIDGE_VERSION)
+        ZIPFILE=thinkingbridge-$MODVERSION.zip
         ZIPPATH=$OUT/$ZIPFILE
         if [ ! -f $ZIPPATH ] ; then
             echo "Nothing to eat"
@@ -688,7 +686,7 @@ function eat()
             done
             echo "Device Found.."
         fi
-    if (adb shell cat /system/build.prop | grep -q "ro.carbon.device=$CARBON_BUILD");
+    if (adb shell cat /system/build.prop | grep -q "ro.thinkingbridge.device=$THINKINGBRIDGE_BUILD");
     then
         # if adbd isn't root we can't write to /cache/recovery/
         adb root
@@ -717,7 +715,7 @@ EOF
     fi
     return $?
     else
-        echo "The connected device does not appear to be $CARBON_BUILD, run away!"
+        echo "The connected device does not appear to be $THINKINGBRIDGE_BUILD, run away!"
     fi
 }
 
@@ -1465,75 +1463,6 @@ function godir () {
     \cd $T/$pathname
 }
 
-function crremote()
-{
-    git remote rm crremote 2> /dev/null
-    if [ ! -d .git ]
-    then
-        echo .git directory not found. Please run this from the root directory of the Android repository you wish to set up.
-    fi
-    GERRIT_REMOTE=$(cat .git/config  | grep git://github.com | awk '{ print $NF }' | sed s#git://github.com/##g)
-    if [ -z "$GERRIT_REMOTE" ]
-    then
-        GERRIT_REMOTE=$(cat .git/config  | grep http://github.com | awk '{ print $NF }' | sed s#http://github.com/##g)
-        if [ -z "$GERRIT_REMOTE" ]
-        then
-          echo Unable to set up the git remote, are you in the root of the repo?
-          return 0
-        fi
-    fi
-    CRUSER=`git config --get review.review.carbon-rom.com.username`
-    if [ -z "$CRUSER" ]
-    then
-        git remote add crremote ssh://review.carbon-rom.com:29419/$GERRIT_REMOTE
-    else
-        git remote add crremote ssh://$CRUSER@review.carbon-rom.com:29419/$GERRIT_REMOTE
-    fi
-    echo You can now push to "crremote".
-}
-export -f crremote
-
-function crrebase() {
-    local repo=$1
-    local refs=$2
-    local pwd="$(pwd)"
-    local dir="$(gettop)/$repo"
-
-    if [ -z $repo ] || [ -z $refs ]; then
-        echo "CarbonRom Gerrit Rebase Usage: "
-        echo "      crrebase <path to project> <patch IDs on Gerrit>"
-        echo "      The patch IDs appear on the Gerrit commands that are offered."
-        echo "      They consist on a series of numbers and slashes, after the text"
-        echo "      refs/changes. For example, the ID in the following command is 26/8126/2"
-        echo ""
-        echo "      git[...]ges_apps_Camera refs/changes/26/8126/2 && git cherry-pick FETCH_HEAD"
-        echo ""
-        return
-    fi
-
-    if [ ! -d $dir ]; then
-        echo "Directory $dir doesn't exist in tree."
-        return
-    fi
-    cd $dir
-    repo=$(cat .git/config  | grep git://github.com | awk '{ print $NF }' | sed s#git://github.com/##g)
-    echo "Starting branch..."
-    repo start tmprebase .
-    echo "Bringing it up to date..."
-    repo sync .
-    echo "Fetching change..."
-    git fetch "http://review.carbon-rom.com/p/$repo" "refs/changes/$refs" && git cherry-pick FETCH_HEAD
-    if [ "$?" != "0" ]; then
-        echo "Error cherry-picking. Not uploading!"
-        return
-    fi
-    echo "Uploading..."
-    repo upload .
-    echo "Cleaning up..."
-    repo abandon tmprebase .
-    cd $pwd
-}
-
 function aospremote()
 {
     git remote rm aosp 2> /dev/null
@@ -1597,7 +1526,7 @@ function installboot()
     sleep 1
     adb wait-for-online shell mount /system 2>&1 > /dev/null
     adb wait-for-online remount
-    if (adb shell cat /system/build.prop | grep -q "ro.carbon.device=$CARBON_BUILD");
+    if (adb shell cat /system/build.prop | grep -q "ro.thinkingbridge.device=$THINKINGBRIDGE_BUILD");
     then
         adb push $OUT/boot.img /cache/
         for i in $OUT/system/lib/modules/*;
@@ -1613,7 +1542,7 @@ function installboot()
         adb shell chmod 644 /system/lib/modules/*
         echo "Installation complete."
     else
-        echo "The connected device does not appear to be $CARBON_BUILD, run away!"
+        echo "The connected device does not appear to be $THINKINGBRIDGE_BUILD, run away!"
     fi
 }
 
@@ -1647,13 +1576,13 @@ function installrecovery()
     sleep 1
     adb wait-for-online shell mount /system 2>&1 >> /dev/null
     adb wait-for-online remount
-    if (adb shell cat /system/build.prop | grep -q "ro.carbon.device=$CARBON_BUILD");
+    if (adb shell cat /system/build.prop | grep -q "ro.thinkingbridge.device=$THINKINGBRIDGE_BUILD");
     then
         adb push $OUT/recovery.img /cache/
         adb shell dd if=/cache/recovery.img of=$PARTITION
         echo "Installation complete."
     else
-        echo "The connected device does not appear to be $CARBON_BUILD, run away!"
+        echo "The connected device does not appear to be $THINKINGBRIDGE_BUILD, run away!"
     fi
 }
 
@@ -1704,7 +1633,7 @@ function dopush()
         echo "Device Found."
     fi
 
-    if (adb shell cat /system/build.prop | grep -q "ro.carbon.device=$CARBON_BUILD");
+    if (adb shell cat /system/build.prop | grep -q "ro.thinkingbridge.device=$THINKINGBRIDGE_BUILD");
     then
     # retrieve IP and PORT info if we're using a TCP connection
     TCPIPPORT=$(adb devices | egrep '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+:[0-9]+[^0-9]+' \
@@ -1755,7 +1684,7 @@ function dopush()
     rm -f $OUT/.log
     return 0
     else
-        echo "The connected device does not appear to be $CARBON_BUILD, run away!"
+        echo "The connected device does not appear to be $THINKINGBRIDGE_BUILD, run away!"
     fi
 }
 
@@ -1771,7 +1700,7 @@ function repopick() {
 function fixup_common_out_dir() {
     common_out_dir=$(get_build_var OUT_DIR)/target/common
     target_device=$(get_build_var TARGET_DEVICE)
-    if [ ! -z $CARBON_FIXUP_COMMON_OUT ]; then
+    if [ ! -z $THINKINGBRIDGE_FIXUP_COMMON_OUT ]; then
         if [ -d ${common_out_dir} ] && [ ! -L ${common_out_dir} ]; then
             mv ${common_out_dir} ${common_out_dir}-${target_device}
             ln -s ${common_out_dir}-${target_device} ${common_out_dir}
@@ -1837,7 +1766,7 @@ unset f
 
 # Add completions
 check_bash_version && {
-    dirs="sdk/bash_completion vendor/carbon/bash_completion"
+    dirs="sdk/bash_completion vendor/thinkingbridge/bash_completion"
     for dir in $dirs; do
     if [ -d ${dir} ]; then
         for f in `/bin/ls ${dir}/[a-z]*.bash 2> /dev/null`; do
