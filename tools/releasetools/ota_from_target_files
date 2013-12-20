@@ -443,7 +443,6 @@ def WriteFullOTAPackage(input_zip, output_zip):
 
   AppendAssertions(script, OPTIONS.info_dict)
   device_specific.FullOTA_Assertions()
-  script.Print(time.strftime("Built at: %Y-%m-%d %H:%M (%Z)", time.localtime()))
   device_specific.FullOTA_InstallBegin()
 
   if OPTIONS.backuptool:
@@ -460,15 +459,15 @@ def WriteFullOTAPackage(input_zip, output_zip):
   if "selinux_fc" in OPTIONS.info_dict:
     WritePolicyConfig(OPTIONS.info_dict["selinux_fc"], output_zip)
 
-  script.Print("Formatting /system")
+  script.Print("Formatting system...")
   script.FormatPartition("/system")
   script.Mount("/system")
   script.UnpackPackageDir("recovery", "/system")
-  script.Print("Extracting /system")
+  script.Print("Extracting system...")
   script.UnpackPackageDir("system", "/system")
 
   symlinks = CopySystemFiles(input_zip, output_zip)
-  script.Print("Symlinking")
+  script.Print("Symlinking...")
   script.MakeSymlinks(symlinks)
 
   boot_img = common.GetBootableImage("boot.img", "boot.img",
@@ -489,8 +488,17 @@ def WriteFullOTAPackage(input_zip, output_zip):
     script.RunBackup("restore")
 
   script.ShowProgress(0.2, 10)
-  script.Print("Flashing boot.img")
+  script.Print("Flashing kernel...")
   script.WriteRawImage("/boot", "boot.img")
+  
+  script.Print(time.strftime("Built at: %Y-%m-%d %H:%M (%Z)", time.localtime()))
+  
+  device = GetBuildProp("ro.product.device", OPTIONS.info_dict)
+  model = GetBuildProp("ro.product.model", OPTIONS.info_dict)
+  script.Print("Device: %s (%s)"%(model, device));
+  script.Print("");
+  script.Print("");
+  script.Print("Enjoy");
 
   script.ShowProgress(0.1, 0)
   device_specific.FullOTA_InstallEnd()
