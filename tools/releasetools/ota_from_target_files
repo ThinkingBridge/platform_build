@@ -455,6 +455,13 @@ def WriteFullOTAPackage(input_zip, output_zip):
   if OPTIONS.wipe_user_data:
     script.Print("Formatting /data")
     script.FormatPartition("/data")
+    
+  script.Print(time.strftime("Built at: %Y-%m-%d %H:%M (%Z)", time.localtime()))
+  
+  device = GetBuildProp("ro.product.device", OPTIONS.info_dict)
+  model = GetBuildProp("ro.product.model", OPTIONS.info_dict)
+  script.Print("Device: %s (%s)"%(model, device));
+  script.Print("");
 
   if "selinux_fc" in OPTIONS.info_dict:
     WritePolicyConfig(OPTIONS.info_dict["selinux_fc"], output_zip)
@@ -490,15 +497,6 @@ def WriteFullOTAPackage(input_zip, output_zip):
   script.ShowProgress(0.2, 10)
   script.Print("Flashing kernel...")
   script.WriteRawImage("/boot", "boot.img")
-  
-  script.Print(time.strftime("Built at: %Y-%m-%d %H:%M (%Z)", time.localtime()))
-  
-  device = GetBuildProp("ro.product.device", OPTIONS.info_dict)
-  model = GetBuildProp("ro.product.model", OPTIONS.info_dict)
-  script.Print("Device: %s (%s)"%(model, device));
-  script.Print("");
-  script.Print("");
-  script.Print("Enjoy");
 
   script.ShowProgress(0.1, 0)
   device_specific.FullOTA_InstallEnd()
