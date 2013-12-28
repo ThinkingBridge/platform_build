@@ -34,9 +34,9 @@ include $(SRC_TARGET_DIR)/product/emulator.mk
 # Additional settings used in all AOSP builds
 PRODUCT_PROPERTY_OVERRIDES := \
     ro.com.android.dateformat=MM-dd-yyyy \
-    ro.config.ringtone=Titania.ogg \
-    ro.config.notification_sound=Tethys.ogg \
-    ro.config.alarm_alert=Osmium.ogg
+    ro.config.ringtone=Themos.ogg \
+    ro.config.notification_sound=Antimony.ogg \
+    ro.config.alarm_alert=Oxygen.ogg
 
 # Put en_US first in the list, so make it default.
 PRODUCT_LOCALES := en_US

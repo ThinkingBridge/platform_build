@@ -20,9 +20,9 @@
 # core_minimal.mk instead.
 
 PRODUCT_PROPERTY_OVERRIDES := \
-    ro.config.ringtone=Titania.ogg \
-    ro.config.notification_sound=Tethys.ogg \
-    ro.config.alarm_alert=Osmium.ogg
+    ro.config.ringtone=Themos.ogg \
+    ro.config.notification_sound=Antimony.ogg \
+    ro.config.alarm_alert=Oxygen.ogg
 
 PRODUCT_PACKAGES += \
     BasicDreams \
