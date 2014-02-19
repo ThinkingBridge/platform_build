@@ -22,7 +22,7 @@
 PRODUCT_PROPERTY_OVERRIDES := \
     ro.config.ringtone=Themos.ogg \
     ro.config.notification_sound=Antimony.ogg \
-    ro.config.alarm_alert=Oxygen.ogg
+    ro.config.alarm_alert=Hassium.ogg
 
 PRODUCT_PACKAGES += \
     BasicDreams \
