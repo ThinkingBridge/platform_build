@@ -1526,7 +1526,7 @@ $(APPS_ZIP): $(INSTALLED_SYSTEMIMAGE)
 	@echo -e ${PRT_HST}"Package apps:"${CL_RST}" $@"
 	$(hide) rm -rf $@
 	$(hide) mkdir -p $(dir $@)
-	$(hide) zip -qj $@ $(TARGET_OUT_APPS)/*
+	$(hide) zip -qj $@ $(TARGET_OUT_APPS)/* $(TARGET_OUT_APPS_PRIVILEGED)/*
 
 
 #------------------------------------------------------------------
